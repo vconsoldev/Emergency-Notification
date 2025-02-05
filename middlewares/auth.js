@@ -1,15 +1,27 @@
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken'
+const JWT_SECRET = process.env.JWT_SECRET;
 
-export const auth = async (req, res, next) => {
-  const jwt_secret = process.env.JWT_SECRET;
 
-  jwt.verify(token, jwt_secret, function (err, decoded) {
-    if (err) {
-      return res.status(400).json({ error: err });git 
+const verifyToken = (token) => {
+    try {
+      return jwt.verify(token, JWT_SECRET);
+    } catch (error) {
+      return null;
     }
+  };
 
-    req.user = decoded.user_id;
-
-    return next();
-  });
-};
+  export const authenticate = (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1];
+  
+    if (!token) {
+      return res.status(401).json({ error: 'Access Denied. No Token Provided.' });
+    }
+  
+    const decoded = verifyToken(token);
+    if (!decoded) {
+      return res.status(401).json({ error: 'Invalid Token' });
+    }
+  
+    req.user = decoded; 
+    next();
+  };
