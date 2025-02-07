@@ -1,75 +1,127 @@
 import jwt from "jsonwebtoken";
-import { users,hashPassword } from '../models/userModel.js';
-import { userValidator } from '../validators/userValidator.js';
-import { connectDB } from '../drizzle/db.js';
+import { users, hashPassword } from "../models/userModel.js";
+import {
+  loginUserValidator,
+  registerUserValidator,
+} from "../validators/userValidator.js";
+
+import { connectDB } from "../drizzle/db.js";
+import { logger } from "../utils/logger.js";
+import { register_success_template } from "../utils/emailtemplate/template.js";
+import sendMail from "../utils/sendverification/email.js";
+// importing logger
 
 export const registerUser = async (req, res) => {
   const db = await connectDB();
-
+  let logger_target;
   try {
-    const validatedData = userValidator.parse(req.body);
+    const validatedData = registerUserValidator.parse(req.body);
 
-    const { email, password, first_name, last_name, phone_number, 
-        // role_id, organization_id 
-           } = validatedData;
+    console.log("inside registration api");
+    const {
+      email,
+      password,
+      name,
+      contact_number,
+      // role_id, organization_id
+    } = validatedData;
+    // adding email for logging to global context
+    logger_target = email;
 
-    const existingUser = await db.select().from(users).where(users.email===email);
+    const existingUser = await db
+      .select()
+      .from(users)
+      .where(users.email === email);
     if (existingUser.length > 0) {
-      return res.status(400).json({ error: 'Email already registered' });
+      const errorMessage = "Email already registered";
+      logger.error(errorMessage, { email });
+      return res.status(400).json({ error: "Email already registered" });
     }
 
     const password_hash = await hashPassword(password);
 
     await db.insert(users).values({
       email,
-      password:password_hash,
-      first_name,
-      last_name,
-      phone_number,
-    //   role_id,
-    //   organization_id,
+      password: password_hash,
+      name,
+      contact_number,
+      //   role_id,
+      //   organization_id,
     });
 
-    res.status(201).json({ message: 'User registered successfully' });
+    logger.info("User registered successfully", { email });
+    let data = await sendMail(
+      "Apptiv",
+      email,
+      "Registration Success",
+      register_success_template
+    );
+    
 
+
+
+
+    console.log(data)
+    return res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
-    if (error.errors) {
-      res.status(400).json({ error: error.errors });
+    if (error?.errors) {
+      return res.status(400).json({ error: error?.errors });
     } else {
       console.error(error);
-      res.status(500).json({ error: 'Internal Server Error' });
+      const server_error = "Internal Server Error";
+      logger.error(server_error, { email: logger_target });
+
+      return res.status(500).json({ error: server_error });
     }
   }
 };
 
-
 export const loginUser = async (req, res) => {
   const db = await connectDB();
-  const { email, password } = req.body;
-
+  let logger_target;
   try {
+    const validatedData = loginUserValidator.parse(req.body);
 
-    const user = await db.select().from(users).where(users.email===email).limit(1);
-    
+    const { email, password } = validatedData;
+
+    // adding email to global context for logging
+    logger_target = email;
+    const user = await db
+      .select()
+      .from(users)
+      .where(users.email === email)
+      .limit(1);
+
     if (user.length === 0) {
-      return res.status(400).json({ error: 'user not found' });
+      logger.error("User registered successfully", { email });
+
+      return res.status(401).json({ error: "User not found" });
     }
 
     const userData = user[0];
 
-
     const isPasswordValid = await bcrypt.compare(password, userData.password);
     if (!isPasswordValid) {
-      return res.status(400).json({ error: 'Invalid password' });
+      const validation_error = "Incorrect email or password";
+      logger.error(validation_error, { email });
+      return res.status(400).json({ error: validation_error });
     }
-   const JWT_SECRET = process.env.JWT_SECRET;
+    const JWT_SECRET = process.env.JWT_SECRET;
 
-    const token =  jwt.sign({ user_id: userData.user_id, email: userData.email },JWT_SECRET,{ expiresIn: '1M' } );
+    const token = jwt.sign(
+      { user_id: userData.user_id, email: userData.email },
+      JWT_SECRET,
+      { expiresIn: "1M" }
+    );
+    const success_message = "Login successful";
+    logger.info(success_message, { email });
 
-    res.status(200).json({ message: 'Login successful', token });
-
+    return res.status(200).json({ message: success_message, token });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    const server_error = "Internal Server Error";
+    logger.error(server_error, { email: logger_target });
+
+    return res.status(500).json({ error: server_error });
   }
 };
