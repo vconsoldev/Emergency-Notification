@@ -7,7 +7,6 @@ async function loadConfig() {
   try {
     const fileUrl = new URL('../config/firebase/firebase_config.json', import.meta.url);
     const json = JSON.parse(await readFile(fileUrl, { encoding: 'utf8' }));
-    // console.log(json);
     return json; // Return the config object
   } catch (error) {
     console.error("Error reading or parsing JSON file:", error);
