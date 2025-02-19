@@ -2,3 +2,5 @@
 /.env
 /pnpm-lock.yaml
 /config/firebase/firebase_config.json
+/migrations
+/logs

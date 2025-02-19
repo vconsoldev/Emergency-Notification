@@ -1,8 +1,10 @@
 import { pgTable, uuid, varchar, timestamp } from 'drizzle-orm/pg-core';
+import { organizations } from './organization.model.js';
+import { serial } from 'drizzle-orm/mysql-core';
 
 export const sites = pgTable('sites', {
   id: uuid('id').primaryKey().defaultRandom(), 
-  organization_id: uuid('organization_id').notNull().references(() => organizations.id), 
+  organization_id: uuid('organization_id').notNull().references(() => organizations.organization_id), 
   name: varchar('name', { length: 255 }).notNull(),
   address_line_1: varchar('address_line_1', { length: 255 }).notNull(),
   address_line_2: varchar('address_line_2', { length: 255 }),

@@ -1,4 +1,5 @@
 import { pgTable, uuid, varchar, text, timestamp } from 'drizzle-orm/pg-core';
+import { sites } from './site.model';
 
 export const areas = pgTable('areas', {
   id: uuid('id').primaryKey().defaultRandom(), 
