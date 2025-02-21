@@ -5,5 +5,5 @@ export const organizationValidator = z.object({
   email_domain: z.string()
     .min(1, { message: 'Email domain is required' })
     .regex(/^@[\w.-]+\.[a-zA-Z]{2,}$/, { message: 'Invalid email domain format (e.g., @org.com)' }),
-  industry_type: z.string().min(1, { message: 'Industry type is required' })
+  industry_type: z.string( { message: 'Industry type is required' })
 });

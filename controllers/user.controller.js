@@ -1,11 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { users, hashPassword } from "../models/user.model.js";
-import {
-  loginUserValidator,
-  registerUserValidator,
-} from "../validators/user.validator.js";
-
+import {loginUserValidator,registerUserValidator,} from "../validators/user.validator.js";
 import { connectDB } from "../drizzle/db.js";
 import { logger } from "../utils/logger.js";
 import { register_success_template } from "../utils/emailtemplate/template.js";
@@ -18,7 +14,6 @@ export const registerUser = async (req, res) => {
   try {
     const validatedData = registerUserValidator.parse(req.body);
 
-    console.log("inside registration api");
     const {
       email,
       password,

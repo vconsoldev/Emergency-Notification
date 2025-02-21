@@ -201,4 +201,75 @@ let register_success_template = `
 </html>
 `;
 
-export { forgot_password_template, register_success_template };
+let organization_reg_otp_template = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Email</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 15px;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 14px;
+            color: #666;
+            margin: 10px 0;
+        }
+        .otp-code {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2563eb;
+            letter-spacing: 2px;
+            margin: 15px 0;
+        }
+        .footer {
+            font-size: 12px;
+            color: #888;
+            margin-top: 20px;
+        }
+        .footer strong {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+ 
+    <div class="container">
+        <h1>Your OTP Code</h1>
+        <p>Use the code below to verify your email.</p>
+ 
+        <div class="otp-code">{{OTP}}</div> <!-- Replace dynamically -->
+ 
+        <p>This OTP is valid for <strong>5 minutes</strong>. Do not share it with anyone.</p>
+ 
+        <p class="footer">If you did not request this, please ignore this email.</p>
+ 
+        <p class="footer"><strong>— Apttiv Team</strong></p>
+    </div>
+ 
+</body>
+</html>`
+
+export { forgot_password_template, register_success_template,organization_reg_otp_template };
