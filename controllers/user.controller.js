@@ -86,7 +86,7 @@ export const loginUser = async (req, res) => {
       .limit(1);
 
     if (user.length === 0) {
-      logger.error("User loggged in successfully", { email });
+      logger.error("User not found", { email });
 
       return res.status(401).json({ error: "User not found" });
     }

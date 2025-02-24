@@ -13,7 +13,8 @@ export const checkBusinessName = async(req,res)=>{
   const db = await connectDB();
   let logger_target;
   try{
-    const businessName = (req.body.businessName);
+    const validatedData = organizationValidator.parse(req.body);
+    const {businessName} = validatedData;
 
     logger_target = businessName;
      
@@ -51,7 +52,9 @@ export const sendOtp = async(req,res)=>{
   const db = await connectDB();
   let logger_target;
   try{
-    const email = (req.body.email);
+    const validatedData = organizationValidator.parse(req.body);
+
+     const {email}  =validatedData;
 
     logger_target = email;
      

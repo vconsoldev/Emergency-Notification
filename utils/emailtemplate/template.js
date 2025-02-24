@@ -99,8 +99,6 @@ let forgot_password_template = `
 </html>
 `;
 
-
-
 // Registration Success Email Template
 let register_success_template = `
 <!DOCTYPE html>
@@ -201,7 +199,8 @@ let register_success_template = `
 </html>
 `;
 
-let organization_reg_otp_template = `<!DOCTYPE html>
+let organization_reg_otp_template = `
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -270,6 +269,7 @@ let organization_reg_otp_template = `<!DOCTYPE html>
     </div>
  
 </body>
-</html>`
+</html>
+`;
 
 export { forgot_password_template, register_success_template,organization_reg_otp_template };
